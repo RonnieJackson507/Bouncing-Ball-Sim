@@ -37,10 +37,10 @@ while running:
     # Fill the screen with a color (RGB)
     screen.fill((0, 0, 0))  # Fill with black
     
-    # Create the text surface
+    # Render the updated collision count
     text_surface = font.render(f"Collisions = {collisions}", True, (255,255,255))
 
-    # Get the rectangle of the text
+    # Get the position of the text
     text_rect = text_surface.get_rect(center = (width/2, height - 100))
 
     # Display the text onto the bottom of the screen
@@ -54,6 +54,9 @@ while running:
 
     # Update the display
     pygame.display.update()
+
+    # Limit the frame rate to 60 FPS
+    pygame.time.Clock().tick(60)
 
 # Quit Pygame
 pygame.quit()
