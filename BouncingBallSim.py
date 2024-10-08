@@ -3,8 +3,11 @@ import pygame
 # Initialize Pygame
 pygame.init()
 
-# Create a screen (window) with width=800 and height=600
-screen = pygame.display.set_mode((600, 800))
+# Create a screen (window) with width=600 and height=800
+width = 600
+height = 800
+ballRaduis = 10
+screen = pygame.display.set_mode((width, height))
 
 # Set title of the window
 pygame.display.set_caption("Bouncing Ball Simulator")
@@ -21,6 +24,9 @@ while running:
     
     # Fill the screen with a color (RGB)
     screen.fill((0, 0, 0))  # Fill with black
+
+    # Draw a red circle in the center of the screen
+    pygame.draw.circle(screen, (255, 0, 0), (width/2, height/2), ballRaduis)
 
     # Update the display
     pygame.display.update()
