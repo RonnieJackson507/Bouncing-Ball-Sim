@@ -18,12 +18,8 @@ pygame.display.set_caption("Bouncing Ball Simulator")
 # Create a font object
 font = pygame.font.Font(None, 50)
 
-# Create the text surface
-text_surface = font.render('Collisions = 0', True, (255,255,255))
-
-# Get the rectangle of the text
-text_rect = text_surface.get_rect(center = (width/2, height - 100))
-
+# Number of collisions from the ball
+collisions = 0
 
 # Main loop flag
 running = True
@@ -35,8 +31,17 @@ while running:
         if event.type == pygame.QUIT:
             running = False
     
+    # Update collisions 
+    #collisions += 1
+
     # Fill the screen with a color (RGB)
     screen.fill((0, 0, 0))  # Fill with black
+    
+    # Create the text surface
+    text_surface = font.render(f"Collisions = {collisions}", True, (255,255,255))
+
+    # Get the rectangle of the text
+    text_rect = text_surface.get_rect(center = (width/2, height - 100))
 
     # Display the text onto the bottom of the screen
     screen.blit(text_surface, text_rect)
