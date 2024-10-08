@@ -1,15 +1,15 @@
 import pygame
 
 ballRadius = 10
-borderRadius = 250
+borderRadius = 200
 borderWidth = 2
 
 # Initialize Pygame
 pygame.init()
 
-# Create a screen (window) with width=600 and height=800
+# Create a screen (window) with aspect ration of 9:16
 width = 600
-height = 800
+height = width * 1.778
 screen = pygame.display.set_mode((width, height))
 
 # Set title of the window
@@ -29,10 +29,10 @@ while running:
     screen.fill((0, 0, 0))  # Fill with black
 
     # Draw a border in the center of the screen
-    pygame.draw.circle(screen, (255, 255, 255), (width/2, height/2), borderRadius, borderWidth)
+    pygame.draw.circle(screen, (255, 255, 255), (width/2, height/2 - 100), borderRadius, borderWidth)
 
     # Draw a red circle in the center of the screen
-    pygame.draw.circle(screen, (255, 0, 0), (width/2, height/2), ballRadius)
+    pygame.draw.circle(screen, (255, 0, 0), (width/2, height/2 - 100), ballRadius)
 
     # Update the display
     pygame.display.update()
