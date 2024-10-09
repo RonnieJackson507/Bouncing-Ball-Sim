@@ -24,8 +24,8 @@ vel_y = 0 # Initial vertical velocity
 gravity = 0.5 # Gravity Constant
 
 # Ball object(s)
-# Inital ball position
-ball1 = Ball.Ball(width/2, height/2 -50)
+# Make red ball
+ball1 = Ball.Ball(width/2, height/2 -50, (255,0,0))
 
 # Number of collisions from the ball
 collisions = 0
@@ -64,7 +64,7 @@ while running:
     pygame.draw.circle(screen, (255, 255, 255), (width/2, height/2 - 50), borderRadius, borderWidth)
 
     # Draw the red ball
-    pygame.draw.circle(screen, (255, 0, 0), (ball1.posX, ball1.posY), ball1.radius)
+    pygame.draw.circle(screen, ball1.color, (ball1.posX, ball1.posY), ball1.radius)
 
     # Update the display
     pygame.display.update()

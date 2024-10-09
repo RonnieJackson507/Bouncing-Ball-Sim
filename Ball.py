@@ -1,7 +1,8 @@
 #Define Ball class
 class Ball:
     #Constructor
-    def __init__(self, posX, posY):
+    def __init__(self, posX, posY, color):
         self.posX = posX
         self.posY = posY
         self.radius = 10
+        self.color = color
