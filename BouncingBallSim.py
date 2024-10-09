@@ -1,9 +1,5 @@
 import pygame
 
-ballRadius = 10
-borderRadius = 200
-borderWidth = 2
-
 # Initialize Pygame
 pygame.init()
 
@@ -18,6 +14,20 @@ pygame.display.set_caption("Bouncing Ball Simulator")
 # Create a font object
 font = pygame.font.Font(None, 50)
 
+# Border variables
+borderRadius = 200
+borderWidth = 2
+
+# Physics variables
+vel_y = 0 # Initial vertical velocity
+gravity = 0.5 # Gravity Constant
+
+# Ball variables
+# Inital ball position
+ball_pos_x = width / 2
+ball_pos_y = height / 2 - 50
+ballRadius = 10
+
 # Number of collisions from the ball
 collisions = 0
 
@@ -31,6 +41,11 @@ while running:
         if event.type == pygame.QUIT:
             running = False
     
+    # Apply Gravity
+    vel_y += gravity
+    ball_pos_y += vel_y
+
+
     # Update collisions 
     #collisions += 1
 
@@ -46,11 +61,11 @@ while running:
     # Display the text onto the bottom of the screen
     screen.blit(text_surface, text_rect)
 
-    # Draw a border in the center of the screen
+    # Draw the border in the center of the screen
     pygame.draw.circle(screen, (255, 255, 255), (width/2, height/2 - 50), borderRadius, borderWidth)
 
-    # Draw a red circle in the center of the screen
-    pygame.draw.circle(screen, (255, 0, 0), (width/2, height/2 - 50), ballRadius)
+    # Draw the red ball
+    pygame.draw.circle(screen, (255, 0, 0), (ball_pos_x, ball_pos_y), ballRadius)
 
     # Update the display
     pygame.display.update()
