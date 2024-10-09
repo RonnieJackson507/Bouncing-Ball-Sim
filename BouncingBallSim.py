@@ -1,4 +1,5 @@
 import pygame
+import math
 import Ball
 
 # Initialize Pygame
@@ -16,6 +17,8 @@ pygame.display.set_caption("Bouncing Ball Simulator")
 font = pygame.font.Font(None, 50)
 
 # Border variables
+borderX = width / 2
+borderY = height / 2 - 50
 borderRadius = 200
 borderWidth = 2
 
@@ -55,13 +58,23 @@ while running:
     screen.blit(text_surface, text_rect)
 
     # Draw the border in the center of the screen
-    pygame.draw.circle(screen, (255, 255, 255), (width/2, height/2 - 50), borderRadius, borderWidth)
+    pygame.draw.circle(screen, (255, 255, 255), (borderX, borderY), borderRadius, borderWidth)
 
     # Traverse through the Balls array
     for ball in balls:
         # Apply Gravity
         vel_y += gravity
-        ball.posY += vel_y
+        ball.posY += vel_y * 0.5
+
+        # Calculate the distance from the center of the border to the ball
+        dist = math.sqrt((ball.posX - borderX) ** 2 + (ball.posY - borderY) ** 2)
+
+        # Dectect Collisions
+        if dist + ball.radius >= borderRadius:
+            vel_y = -vel_y
+            #Reset the ball position
+            ball.posY -= ball.radius
+            collisions += 1
 
         # Draw the ball
         pygame.draw.circle(screen, ball.color, (ball.posX, ball.posY), ball.radius)
