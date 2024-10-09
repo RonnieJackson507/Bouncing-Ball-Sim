@@ -1,4 +1,5 @@
 import pygame
+import Ball
 
 # Initialize Pygame
 pygame.init()
@@ -22,11 +23,9 @@ borderWidth = 2
 vel_y = 0 # Initial vertical velocity
 gravity = 0.5 # Gravity Constant
 
-# Ball variables
+# Ball object(s)
 # Inital ball position
-ball_pos_x = width / 2
-ball_pos_y = height / 2 - 50
-ballRadius = 10
+ball1 = Ball.Ball(width/2, height/2 -50)
 
 # Number of collisions from the ball
 collisions = 0
@@ -43,7 +42,7 @@ while running:
     
     # Apply Gravity
     vel_y += gravity
-    ball_pos_y += vel_y
+    ball1.posY += vel_y
 
 
     # Update collisions 
@@ -65,7 +64,7 @@ while running:
     pygame.draw.circle(screen, (255, 255, 255), (width/2, height/2 - 50), borderRadius, borderWidth)
 
     # Draw the red ball
-    pygame.draw.circle(screen, (255, 0, 0), (ball_pos_x, ball_pos_y), ballRadius)
+    pygame.draw.circle(screen, (255, 0, 0), (ball1.posX, ball1.posY), ball1.radius)
 
     # Update the display
     pygame.display.update()
