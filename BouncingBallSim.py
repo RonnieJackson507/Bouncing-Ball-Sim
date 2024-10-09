@@ -1,5 +1,6 @@
 import pygame
 import math
+import random
 import Ball
 
 # Initialize Pygame
@@ -28,10 +29,48 @@ borderWidth = 2
 gravity = 0.5 # Gravity Constant
 bounce = 0.5 #Bounce Constant
 
+# Definitions for functions
+def random_Xpos(radius):
+    # Generate a random radius (between 0 and the border's radius)
+    r = random.uniform(0, radius)
+    
+    # Generate a random angle in radians (0 to π for the upper half-circle)
+    angle = random.uniform(math.pi, 2 * math.pi)
+    
+    # Convert polar coordinates to Cartesian x
+    x = r * math.cos(angle)
+
+    # Adjust x to the center
+    x += borderX
+
+    return int(x)
+
+def random_Ypos(radius):
+    # Generate a random radius (between 0 and the border's radius)
+    r = random.uniform(0, radius)
+    
+    # Generate a random angle in radians (0 to π for the upper half-circle)
+    angle = random.uniform(math.pi, 2 * math.pi)
+    
+    # Convert polar coordinates to Cartesian y
+    y = r * math.sin(angle)
+    
+    # Adjust y to the center
+    y += borderY - 60
+
+    return int(y)
+
+
 # Ball object(s)
-balls = [Ball.Ball(centerX + 0, centerY -50, (255,0,0)),
-         Ball.Ball(centerX + 150, centerY -50, (0,255,0)),
-         Ball.Ball(centerX - 50, centerY -150, (0,0,255))]
+balls = [Ball.Ball(random_Xpos(borderRadius), random_Ypos(borderRadius), (255,0,0)),
+         Ball.Ball(random_Xpos(borderRadius), random_Ypos(borderRadius), (0,255,0)),
+         Ball.Ball(random_Xpos(borderRadius), random_Ypos(borderRadius), (0,0,255))]
+
+#Debugging ball positions
+debugs = []
+for ball in balls:
+    debugs.append([ball.posX,ball.posY])
+    print(f"initial ball position: {ball.posX}, {ball.posY}")
 
 # Number of collisions from the ball
 collisions = 0
@@ -61,6 +100,10 @@ while running:
     # Display the text onto the bottom of the screen
     screen.blit(text_surface, text_rect)
 
+    # Debug ball positions
+    for debug in debugs:
+        pygame.draw.circle(screen, (255,255,255), (debug[0],debug[1]), 10)
+
     # Draw the border in the center of the screen
     pygame.draw.circle(screen, (255, 255, 255), (borderX, borderY), borderRadius, borderWidth)
 
@@ -75,8 +118,11 @@ while running:
 
         # Dectect Collisions
         if dist + ball.radius >= borderRadius:
+            # Reflect the velocity (bounce) by reversing the direction
             ball.velY = -ball.velY
-            ball.posY -= ball.radius #Reset the ball position
+
+            #Reset the ball position
+            ball.posY -= ball.radius
             collisions += 1
 
         # Draw the ball

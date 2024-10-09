@@ -7,3 +7,4 @@ class Ball:
         self.radius = 10 # Ball's radius
         self.color = color # Ball's color
         self.velY = 0 # Initial vertical velocity
+        self.velX = 0 # Initial horizontal velocity
