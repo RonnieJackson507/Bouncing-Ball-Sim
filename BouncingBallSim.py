@@ -77,7 +77,7 @@ while running:
         # Dectect Collisions
         if dist + ball.radius >= border.radius:
             # Reflect the velocity (bounce) by using normal
-            norm = [ball.pos[0] - border.center[0] / dist, ball.pos[1] - border.center[1] / dist]
+            norm = [(ball.pos[0] - border.center[0]) / dist, (ball.pos[1] - border.center[1]) / dist]
             speed_dot_norm = ball.vel[0] * norm[0] + ball.vel[1] * norm[1]
             ball.vel[0] -= 2 * speed_dot_norm * norm[0]
             ball.vel[1] -= 2 * speed_dot_norm * norm[1]
