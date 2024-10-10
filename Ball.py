@@ -4,12 +4,12 @@ import math
 #Define Ball class
 class Ball:
     #Constructor
-    def __init__(self, border, color):
+    def __init__(self, border):
         self.border = border
         self.posX = self.random_Xpos() # Ball's X position
         self.posY = self.random_Ypos() # Ball's Y position
         self.radius = random.randint(10, 30) # Ball's radius
-        self.color = color # Ball's color
+        self.color = (random.randint(0,255), random.randint(0,255), random.randint(0,255)) # Ball's color
         self.velY = 0 # Initial vertical velocity
         self.velX = 0 # Initial horizontal velocity
 

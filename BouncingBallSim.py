@@ -27,9 +27,9 @@ gravity = 0.5 # Gravity Constant
 bounce = 0.5 #Bounce Constant
 
 # Ball object(s)
-balls = [Ball.Ball(border, (255,0,0)),
-         Ball.Ball(border, (0,255,0)),
-         Ball.Ball(border, (0,0,255))]
+balls = [Ball.Ball(border),
+         Ball.Ball(border),
+         Ball.Ball(border)]
 
 #Debugging ball positions
 debugs = []
