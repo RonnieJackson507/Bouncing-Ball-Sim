@@ -7,7 +7,7 @@ import Border
 pygame.init()
 
 # Create a screen (window) with aspect ration of 9:16
-width = 450
+width = 550
 height = width * 1.778
 centerX = width / 2
 centerY = height / 2
@@ -63,8 +63,8 @@ while running:
     screen.blit(text_surface, text_rect)
 
     # Debug ball positions
-    for debug in debugs:
-        pygame.draw.circle(screen, (255,255,255), (debug[0],debug[1]), 10)
+    #for debug in debugs:
+    #    pygame.draw.circle(screen, (255,255,255), (debug[0],debug[1]), 10)
 
     # Draw the border in the center of the screen
     pygame.draw.circle(screen, (255, 255, 255), (border.x, border.y), border.radius, border.width)
