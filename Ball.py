@@ -6,14 +6,12 @@ class Ball:
     #Constructor
     def __init__(self, border):
         self.border = border
-        self.posX = self.random_Xpos() # Ball's X position
-        self.posY = self.random_Ypos() # Ball's Y position
+        self.pos = [self.random_Xpos(), self.random_Ypos()] # Initial position
         self.radius = random.randint(10, 30) # Ball's radius
         self.color = (random.randint(0,255), random.randint(0,255), random.randint(0,255)) # Ball's color
-        self.velY = 0 # Initial vertical velocity
-        self.velX = 0 # Initial horizontal velocity
+        self.vel = [0, 0] # Initial velocity
 
-    # Definitions for functions
+    # Ball Methods
     def random_Xpos(self):
         # Generate a random radius (between 0 and the border's radius)
         r = random.uniform(0, self.border.radius - 10)
@@ -25,7 +23,7 @@ class Ball:
         x = r * math.cos(angle)
 
         # Adjust x to the center
-        x += self.border.x
+        x += self.border.center[0]
 
         return int(x)
 
@@ -40,6 +38,6 @@ class Ball:
         y = r * math.sin(angle)
     
         # Adjust y to the center
-        y += self.border.y
+        y += self.border.center[1]
 
         return int(y)
