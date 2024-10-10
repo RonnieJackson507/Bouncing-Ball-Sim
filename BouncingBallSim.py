@@ -3,6 +3,10 @@ import math
 import Ball
 import Border
 
+# TODO Add a menu to customize the simulator
+# TODO Add a way to ask the user to add a sound
+# TODO Add a way to add a image to the ball if the User wants it
+
 # Initialize Pygame
 pygame.init()
 
@@ -23,15 +27,9 @@ border = Border.Border(CENTER[0], CENTER[1] - 50, 200, 2)
 
 # Ball object(s)
 balls = []
-balls_num = 1
+balls_num = 50
 for i in range(1,balls_num + 1):
     balls.append(Ball.Ball(border))
-
-#Debugging ball positions
-#debugs = []
-#for ball in balls:
-#    debugs.append([ball.posX,ball.posY])
-#    print(f"initial ball position: {ball.posX}, {ball.posY}")
 
 collisions = 0 # Collisions from the ball
 
@@ -56,7 +54,7 @@ while running:
     text_surface = font.render(f"Collisions = {collisions}", True, (255,255,255))
 
     # Get the position of the text
-    text_rect = text_surface.get_rect(center = (CENTER[0], CENTER[1] - 100))
+    text_rect = text_surface.get_rect(center = (CENTER[0], CENTER[1] + 300))
 
     # Display the text onto the bottom of the screen
     screen.blit(text_surface, text_rect)
@@ -82,6 +80,11 @@ while running:
             ball.vel[0] -= 2 * speed_dot_norm * norm[0]
             ball.vel[1] -= 2 * speed_dot_norm * norm[1]
 
+            # Increase the radius of the ball
+            ball.radius += 10
+
+            # TODO Add sound when the ball hits the border
+
             #Reset the ball position
             ball.pos[0] = border.center[0] + norm[0] * (border.radius - ball.radius)
             ball.pos[1] = border.center[1] + norm[1] * (border.radius - ball.radius)
@@ -89,10 +92,6 @@ while running:
 
         # Draw the ball
         pygame.draw.circle(screen, ball.color, (ball.pos[0], ball.pos[1]), ball.radius)
-
-    # Debug ball positions
-    #for debug in debugs:
-    #    pygame.draw.circle(screen, (255,255,255), (debug[0],debug[1]), 10)
 
     # Update the display
     pygame.display.update()
