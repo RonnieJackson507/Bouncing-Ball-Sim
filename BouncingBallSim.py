@@ -27,15 +27,16 @@ gravity = 0.5 # Gravity Constant
 bounce = 0.5 #Bounce Constant
 
 # Ball object(s)
-balls = [Ball.Ball(border),
-         Ball.Ball(border),
-         Ball.Ball(border)]
+balls = []
+balls_num = 5
+for i in range(1,balls_num + 1):
+    balls.append(Ball.Ball(border))
 
 #Debugging ball positions
-debugs = []
-for ball in balls:
-    debugs.append([ball.posX,ball.posY])
-    print(f"initial ball position: {ball.posX}, {ball.posY}")
+#debugs = []
+#for ball in balls:
+#    debugs.append([ball.posX,ball.posY])
+#    print(f"initial ball position: {ball.posX}, {ball.posY}")
 
 # Number of collisions from the ball
 collisions = 0
