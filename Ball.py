@@ -10,7 +10,7 @@ class Ball:
         self.pos = [self.random_Xpos(), self.random_Ypos()] # Initial position
         self.radius = random.randint(20, 60) # Ball's radius
         self.color = (random.randint(0,255), random.randint(0,255), random.randint(0,255)) # Ball's color
-        self.vel = [0, 0] # Initial velocity
+        self.vel = [random.randint(0,15), random.randint(0,15)] # Initial velocity
         self.collision = 0 # Initial times of collision
         self.sound_effect = sound_effect # Sound effect of the ball
         self.img = image # Image of the ball
