@@ -14,6 +14,8 @@ def open_sound():
         title="Select a file",
         filetypes=(("All files", "*.*"),)  # Allow all file types
     )
+    if sound_path == "":
+        sound_path = None
 
 # Open a file dialog and get the selected file path
 def open_image():
@@ -22,6 +24,8 @@ def open_image():
         title="Select a file",
         filetypes=(("All files", "*.*"),)  # Allow all file types
     )
+    if img_path == "":
+        img_path = None
 
 # Initializes the simulator
 def init_sim():
@@ -50,6 +54,9 @@ def start_sim(balls_num):
     # Set title of the window
     pygame.display.set_caption("Bouncing Ball Simulator")
 
+    # Debugging sound and image file paths
+    #print(f"Sound path = {sound_path} & Image path = {img_path}")
+
     # Load sound effects
     try:
         sound_effect = pygame.mixer.Sound(sound_path)
@@ -60,7 +67,7 @@ def start_sim(balls_num):
 
     # Load images
     try:
-        ball_img = pygame.image.load(img_path) # Load once
+        ball_img = pygame.image.load(img_path).convert_alpha() # Load once
     except pygame.error and TypeError:
         print("Image file not found. Using None.")
         ball_img = None

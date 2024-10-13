@@ -8,7 +8,7 @@ class Ball:
     def __init__(self, border, sound_effect, image):
         self.border = border
         self.pos = [self.random_Xpos(), self.random_Ypos()] # Initial position
-        self.radius = random.randint(10, 30) # Ball's radius
+        self.radius = random.randint(20, 60) # Ball's radius
         self.color = (random.randint(0,255), random.randint(0,255), random.randint(0,255)) # Ball's color
         self.vel = [0, 0] # Initial velocity
         self.collision = 0 # Initial times of collision
