@@ -99,7 +99,15 @@ def start_sim(balls_num):
 # Create the menu window
 root = tk.Tk()
 root.title("Bouncing Ball Simulator")
-root.geometry("300x200")
+
+#Resize the window
+screen_width = root.winfo_screenwidth()
+screen_height = root.winfo_screenheight()
+width = 300
+height = 200
+x = (screen_width // 2) - (width // 2)
+y = (screen_height // 2) - (height // 2)
+root.geometry(f"{width}x{height}+{x}+{y}")
 root.configure(bg="grey")
 
 # Create Input Fields
