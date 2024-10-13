@@ -1,0 +1,19 @@
+# Ignore sound files
+*.wav
+*.ogg
+*.mp3
+
+# Ignore image files
+*.bmp
+*.png
+*.jpg
+*.jpeg
+*.gif
+
+# Ignore other common files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
