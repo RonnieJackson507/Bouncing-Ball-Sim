@@ -100,23 +100,44 @@ def start_sim(balls_num):
 root = tk.Tk()
 root.title("Bouncing Ball Simulator")
 
-#Resize the window
+# Center and Size the window
 screen_width = root.winfo_screenwidth()
 screen_height = root.winfo_screenheight()
-width = 300
-height = 200
+width = 300 # Width of the screen
+height = 200 # Height of the screen
 x = (screen_width // 2) - (width // 2)
 y = (screen_height // 2) - (height // 2)
 root.geometry(f"{width}x{height}+{x}+{y}")
-root.configure(bg="grey")
 
-# Create Input Fields
-tk.Label(root, text="Number of Balls:").grid(row=0, column=0, padx=10, pady=5)
-entry_balls = tk.Entry(root)
-entry_balls.grid(row=0, column=1, padx=10, pady=5)
+# Colors - Dark Theme
+bg_color = "grey20"
+text_color = "white"
+divider_color = "grey20"
+entry_bg_color = "gray30"
 
-#Create a button to perform the simulation by quitting the menu
-tk.Button(root, text="Simulate Bouncing Balls", command= init_sim).grid(row=6, column=0, columnspan=3, padx=10, pady=10)
+# Set background color on the window
+root.configure(bg=bg_color)
+
+# Add Weights to the widgets
+root.grid_rowconfigure(6, weight=1) # Make the last row expandable
+
+# Input Fields
+# Field for number of balls
+tk.Label(root, text="Number of Balls:", bg=bg_color, fg=text_color).grid(row=0, column=0, padx=10, pady=5)
+entry_balls = tk.Entry(root, bg=entry_bg_color, fg=text_color, insertbackground=text_color, justify="right")
+entry_balls.insert(0, "1")
+entry_balls.grid(row=0, column=1, padx=10, pady=5, sticky="e")
+
+# Button for grabbing the sound file of the ball
+tk.Label(root, text="Ball's Sound:", bg=bg_color, fg=text_color).grid(row=1, column=0, padx=10, pady=5)
+tk.Button(root, text="Press to give Sound File", bg=bg_color, fg=text_color, highlightbackground=divider_color).grid(row=1, column=1, columnspan=3, padx=10, pady=10, sticky="sew")
+
+# Button for grabbing the image file of the ball
+tk.Label(root, text="Ball's Image:", bg=bg_color, fg=text_color).grid(row=2, column=0, padx=10, pady=5)
+tk.Button(root, text="Press to give Image File", bg=bg_color, fg=text_color, highlightbackground=divider_color).grid(row=2, column=1, columnspan=3, padx=10, pady=10, sticky="sew")
+
+# Create a button to perform the simulation by quitting the menu
+tk.Button(root, text="Simulate Bouncing Balls", bg=bg_color, fg=text_color, highlightbackground=divider_color, command= init_sim).grid(row=6, column=0, columnspan=3, padx=10, pady=10, sticky="sew")
 
 # Run the Tkinter event loop
 root.mainloop()
