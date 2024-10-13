@@ -17,7 +17,7 @@ class Ball:
 
         # Scale the image to the size of the ball (radius)
         if self.img is not None:
-            self.img = pygame.transform.scale(self.img, (self.radius, self.radius))
+            self.img = pygame.transform.scale(self.img, (self.radius * 2, self.radius * 2))
 
     # Methods:
     # Generate random x position
@@ -56,7 +56,7 @@ class Ball:
     def draw(self, screen):
         # Draw the image if the user gave one
         if self.img is not None:
-            screen.blit(self.img, (self.pos[0], self.pos[1]))
+            screen.blit(self.img, (self.pos[0] - self.radius, self.pos[1] - self.radius))
         # Draw a random colored ball if the user did not give an image
         else:
             pygame.draw.circle(screen, self.color, (self.pos[0], self.pos[1]), self.radius)
