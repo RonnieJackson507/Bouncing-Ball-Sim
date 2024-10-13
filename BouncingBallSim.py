@@ -22,7 +22,7 @@ def start_sim(balls_num):
     pygame.init()
 
     # Create a screen (window) with aspect ration of 9:16
-    WIDTH = 550
+    WIDTH = 400
     HEIGHT = WIDTH * 1.778
     CENTER = [WIDTH / 2, HEIGHT / 2]
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -80,6 +80,8 @@ def start_sim(balls_num):
 
             # Draw the ball
             ball.draw(screen)
+        # Draw the text for the number of balls
+        draw_text(f"Balls = {balls_num}", font, (255, 255, 255), screen, CENTER[0], CENTER[1] - 300)
 
         # Draw the text for the collision
         draw_text(f"Collisions = {collision}", font, (255, 255, 255), screen, CENTER[0], CENTER[1] + 300)
