@@ -5,13 +5,19 @@ import pygame
 #Define Ball class
 class Ball:
     #Constructor
-    def __init__(self, border):
+    def __init__(self, border, sound_effect, image):
         self.border = border
         self.pos = [self.random_Xpos(), self.random_Ypos()] # Initial position
         self.radius = random.randint(10, 30) # Ball's radius
         self.color = (random.randint(0,255), random.randint(0,255), random.randint(0,255)) # Ball's color
         self.vel = [0, 0] # Initial velocity
         self.collision = 0 # Initial times of collision
+        self.sound_effect = sound_effect # Sound effect of the ball
+        self.img = image # Image of the ball
+
+        # Scale the image to the size of the ball (radius)
+        if self.img is not None:
+            self.img = pygame.transform.scale(self.img, (self.radius, self.radius))
 
     # Methods:
     # Generate random x position
@@ -48,7 +54,12 @@ class Ball:
 
     # Draws the Ball
     def draw(self, screen):
-        pygame.draw.circle(screen, self.color, (self.pos[0], self.pos[1]), self.radius)
+        # Draw the image if the user gave one
+        if self.img is not None:
+            screen.blit(self.img, (self.pos[0], self.pos[1]))
+        # Draw a random colored ball if the user did not give an image
+        else:
+            pygame.draw.circle(screen, self.color, (self.pos[0], self.pos[1]), self.radius)
 
     # Update the ball bouncing in the border
     def update(self):
@@ -74,11 +85,12 @@ class Ball:
             # Increase the radius of the ball
             #ball.radius += 1
 
-            # TODO Add sound when the ball hits the border
-
             #Reset the ball position
             self.pos[0] = self.border.center[0] + norm[0] * (self.border.radius - self.radius)
             self.pos[1] = self.border.center[1] + norm[1] * (self.border.radius - self.radius)
+
+            if self.sound_effect is not None:  # Check if sound_effect is valid
+                self.sound_effect.play()
 
             # Increase the number of times the ball collide
             self.collision += 1

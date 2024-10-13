@@ -1,9 +1,27 @@
 import Ball, Border
 import pygame
 import tkinter as tk
+from tkinter import filedialog as fd
 
-# TODO Add a way to ask the user to add a sound
-# TODO Add a way to add a image to the ball if the User wants it
+# Global file path variables
+sound_path = None
+img_path = None
+
+# Open a file dialog and get the selected file path
+def open_sound():
+    global sound_path
+    sound_path = fd.askopenfilename(
+        title="Select a file",
+        filetypes=(("All files", "*.*"),)  # Allow all file types
+    )
+
+# Open a file dialog and get the selected file path
+def open_image():
+    global img_path
+    img_path = fd.askopenfilename(
+        title="Select a file",
+        filetypes=(("All files", "*.*"),)  # Allow all file types
+    )
 
 # Initializes the simulator
 def init_sim():
@@ -18,8 +36,9 @@ def init_sim():
 
 # Starts the simulation
 def start_sim(balls_num):  
-    # Initialize Pygame
+    # Initialize Pygame and the mixer
     pygame.init()
+    pygame.mixer.init()
 
     # Create a screen (window) with aspect ration of 9:16
     WIDTH = 400
@@ -31,6 +50,21 @@ def start_sim(balls_num):
     # Set title of the window
     pygame.display.set_caption("Bouncing Ball Simulator")
 
+    # Load sound effects
+    try:
+        sound_effect = pygame.mixer.Sound(sound_path)
+        sound_effect.set_volume(0.25)  # 50% volume
+    except pygame.error and TypeError:
+        print("Sound effect file not found. Using None.")
+        sound_effect = None
+
+    # Load images
+    try:
+        ball_img = pygame.image.load(img_path) # Load once
+    except pygame.error and TypeError:
+        print("Image file not found. Using None.")
+        ball_img = None
+
     # Create a font object
     font = pygame.font.Font(None, 50)
 
@@ -40,7 +74,7 @@ def start_sim(balls_num):
     # Ball object(s)
     balls = []
     for i in range(1,balls_num + 1):
-        balls.append(Ball.Ball(border))
+        balls.append(Ball.Ball(border, sound_effect, ball_img))
 
     # Draws the text onto the screen
     def draw_text (text, font, color, surface, x, y):
@@ -103,7 +137,7 @@ root.title("Bouncing Ball Simulator")
 # Center and Size the window
 screen_width = root.winfo_screenwidth()
 screen_height = root.winfo_screenheight()
-width = 300 # Width of the screen
+width = 275 # Width of the screen
 height = 200 # Height of the screen
 x = (screen_width // 2) - (width // 2)
 y = (screen_height // 2) - (height // 2)
@@ -130,13 +164,13 @@ entry_balls.grid(row=0, column=1, padx=10, pady=5, sticky="e")
 
 # Button for grabbing the sound file of the ball
 tk.Label(root, text="Ball's Sound:", bg=bg_color, fg=text_color).grid(row=1, column=0, padx=10, pady=5)
-tk.Button(root, text="Press to give Sound File", bg=bg_color, fg=text_color, highlightbackground=divider_color).grid(row=1, column=1, columnspan=3, padx=10, pady=10, sticky="sew")
+tk.Button(root, text="Press to give Sound File", bg=bg_color, fg=text_color, highlightbackground=divider_color, command= open_sound).grid(row=1, column=1, columnspan=3, padx=10, pady=10, sticky="ew")
 
 # Button for grabbing the image file of the ball
 tk.Label(root, text="Ball's Image:", bg=bg_color, fg=text_color).grid(row=2, column=0, padx=10, pady=5)
-tk.Button(root, text="Press to give Image File", bg=bg_color, fg=text_color, highlightbackground=divider_color).grid(row=2, column=1, columnspan=3, padx=10, pady=10, sticky="sew")
+tk.Button(root, text="Press to give Image File", bg=bg_color, fg=text_color, highlightbackground=divider_color, command= open_image).grid(row=2, column=1, columnspan=3, padx=10, pady=10, sticky="ew")
 
-# Create a button to perform the simulation by quitting the menu
+# Button to perform the simulation by quitting the menu
 tk.Button(root, text="Simulate Bouncing Balls", bg=bg_color, fg=text_color, highlightbackground=divider_color, command= init_sim).grid(row=6, column=0, columnspan=3, padx=10, pady=10, sticky="sew")
 
 # Run the Tkinter event loop
