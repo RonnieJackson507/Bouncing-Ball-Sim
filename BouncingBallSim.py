@@ -49,7 +49,7 @@ def start_sim(balls_num):
     HEIGHT = WIDTH * 1.778
     CENTER = [WIDTH / 2, HEIGHT / 2]
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    FPS = 60
+    FPS = 90
 
     # Set title of the window
     pygame.display.set_caption("Bouncing Ball Simulator")
@@ -57,10 +57,14 @@ def start_sim(balls_num):
     # Debugging sound and image file paths
     #print(f"Sound path = {sound_path} & Image path = {img_path}")
 
+    # Increase the number of sound channels
+    CHANNELS_NUM = 32
+    pygame.mixer.set_num_channels(CHANNELS_NUM)
+
     # Load sound effects
     try:
         sound_effect = pygame.mixer.Sound(sound_path)
-        sound_effect.set_volume(0.25)  # 50% volume
+        sound_effect.set_volume(0.15)  # 15% volume
     except pygame.error and TypeError:
         print("Sound effect file not found. Using None.")
         sound_effect = None
@@ -80,8 +84,8 @@ def start_sim(balls_num):
 
     # Ball object(s)
     balls = []
-    for i in range(1,balls_num + 1):
-        balls.append(Ball.Ball(border, sound_effect, ball_img))
+    for i in range(0,balls_num):
+        balls.append(Ball.Ball(border, sound_effect, i % CHANNELS_NUM, ball_img))
 
     # Draws the text onto the screen
     def draw_text (text, font, color, surface, x, y):

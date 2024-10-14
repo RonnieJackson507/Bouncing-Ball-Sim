@@ -5,7 +5,7 @@ import pygame
 #Define Ball class
 class Ball:
     #Constructor
-    def __init__(self, border, sound_effect, image):
+    def __init__(self, border, sound_effect, channel, image):
         self.border = border
         self.pos = [self.random_Xpos(), self.random_Ypos()] # Initial position
         self.radius = random.randint(20, 60) # Ball's radius
@@ -14,10 +14,7 @@ class Ball:
         self.collision = 0 # Initial times of collision
         self.sound_effect = sound_effect # Sound effect of the ball
         self.img = image # Image of the ball
-
-        # Scale the image to the size of the ball (radius)
-        if self.img is not None:
-            self.img = pygame.transform.scale(self.img, (self.radius * 2, self.radius * 2))
+        self.channel = pygame.mixer.Channel(channel) # Sound channel for the ball's sound effect
 
     # Methods:
     # Generate random x position
@@ -56,6 +53,11 @@ class Ball:
     def draw(self, screen):
         # Draw the image if the user gave one
         if self.img is not None:
+            # Scale the image to the size of the ball (radius)
+            self.img = pygame.transform.scale(self.img, (self.radius * 2, self.radius * 2))
+            
+            # Draw the image
+            pygame.draw.circle(screen, self.color, (self.pos[0], self.pos[1]), self.radius)
             screen.blit(self.img, (self.pos[0] - self.radius, self.pos[1] - self.radius))
         # Draw a random colored ball if the user did not give an image
         else:
@@ -83,14 +85,15 @@ class Ball:
             self.vel[1] -= 2 * speed_dot_norm * norm[1]
 
             # Increase the radius of the ball
-            #ball.radius += 1
+            #self.radius += 1
 
-            #Reset the ball position
+            # Reset the ball position
             self.pos[0] = self.border.center[0] + norm[0] * (self.border.radius - self.radius)
             self.pos[1] = self.border.center[1] + norm[1] * (self.border.radius - self.radius)
 
+            # Play the sound effect
             if self.sound_effect is not None:  # Check if sound_effect is valid
-                self.sound_effect.play()
+                self.channel.play(self.sound_effect)
 
             # Increase the number of times the ball collide
             self.collision += 1
