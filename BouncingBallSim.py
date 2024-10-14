@@ -1,11 +1,16 @@
 from os import environ
+# Hide the pygame support prompt
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 import Ball, Border
 import pygame
 import tkinter as tk
 from tkinter import filedialog as fd
+import pyautogui
+import numpy as np
+import pygetwindow as gw
+import cv2
 
-# TODO Add screen recording functionality
+# TODO Add screen recording functionality with audio
 
 # Global file path variables
 sound_path = None
@@ -36,27 +41,43 @@ def init_sim():
     # Get the number of balls
     balls_num = int(entry_balls.get())
 
+    # Get the flag for recording the simulator
+    record_flag = True if record.get() == 1 else False
+
     # Destroy the Menu's window
     root.destroy()
 
     # Start the simulation
-    start_sim(balls_num)
+    start_sim(balls_num, record_flag)
 
 # Starts the simulation
-def start_sim(balls_num):  
+def start_sim(balls_num, record_flag):  
     # Initialize Pygame and the mixer
     pygame.init()
     pygame.mixer.init()
 
     # Create a screen (window) with aspect ration of 9:16
     WIDTH = 400
-    HEIGHT = WIDTH * 1.778
+    HEIGHT = int(WIDTH * 1.778)
     CENTER = [WIDTH / 2, HEIGHT / 2]
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     FPS = 60
 
     # Set title of the window
-    pygame.display.set_caption("Bouncing Ball Simulator")
+    window_title = "Bouncing Ball Simulator"
+    pygame.display.set_caption(window_title)
+
+    # Recording
+    if record_flag:
+        # Get the first window that matches the title (if any)
+        window = gw.getWindowsWithTitle(window_title)[0] if gw.getWindowsWithTitle(window_title) else None
+
+        recording_window = [WIDTH, HEIGHT - 60] # The window for recording
+
+        # Define codec and create a VideoWriter object
+        output_file = "simulation.mp4"
+        fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+        out = cv2.VideoWriter(output_file, fourcc, FPS, (recording_window[0], recording_window[1]))
 
     # Increase the number of sound channels
     CHANNELS_NUM = 32
@@ -134,10 +155,21 @@ def start_sim(balls_num):
         # Update the display
         pygame.display.update()
 
+        if record_flag:
+            # Add screenshots to the frames array
+            img = pyautogui.screenshot(region=(window.left + 9, window.top + 60, recording_window[0], recording_window[1]))
+            frame = np.array(img)
+            frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)  # Convert RGB to BGR for OpenCV
+
+            # Write the frame to the video file
+            out.write(frame)
+
         # Limit the frame rate
         pygame.time.Clock().tick(FPS)
 
-    # Quit Pygame
+    # Quit Pygame and Release the VideoWriter
+    if record_flag:
+        out.release()
     pygame.quit()
 
 # MENU
@@ -148,8 +180,8 @@ root.title("Bouncing Ball Simulator")
 # Center and Size the window
 screen_width = root.winfo_screenwidth()
 screen_height = root.winfo_screenheight()
-width = 275 # Width of the screen
-height = 200 # Height of the screen
+width = 325 # Width of the screen
+height = 250 # Height of the screen
 x = (screen_width // 2) - (width // 2)
 y = (screen_height // 2) - (height // 2)
 root.geometry(f"{width}x{height}+{x}+{y}")
@@ -180,6 +212,16 @@ tk.Button(root, text="Press to give Sound File", bg=bg_color, fg=text_color, hig
 # Button for grabbing the image file of the ball
 tk.Label(root, text="Ball's Image:", bg=bg_color, fg=text_color).grid(row=2, column=0, padx=10, pady=5)
 tk.Button(root, text="Press to give Image File", bg=bg_color, fg=text_color, highlightbackground=divider_color, command= open_image).grid(row=2, column=1, columnspan=3, padx=10, pady=10, sticky="ew")
+
+# Checkbox for recording the simulation or not
+record = tk.IntVar()
+checkbutton = tk.Checkbutton(root, text="Record", variable=record,
+                              bg=bg_color,
+                              fg=text_color,
+                              selectcolor=divider_color,
+                              activebackground=bg_color,
+                              activeforeground=text_color,
+                              highlightbackground=text_color).grid(row=3,column=1, columnspan=3, padx=10, pady=10, sticky="ew")
 
 # Button to perform the simulation by quitting the menu
 tk.Button(root, text="Simulate Bouncing Balls", bg=bg_color, fg=text_color, highlightbackground=divider_color, command= init_sim).grid(row=6, column=0, columnspan=3, padx=10, pady=10, sticky="sew")

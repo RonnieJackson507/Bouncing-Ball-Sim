@@ -10,6 +10,9 @@
 *.jpeg
 *.gif
 
+# Ignore video file
+*.mp4
+
 # Ignore other common files
 __pycache__/
 *.pyc
