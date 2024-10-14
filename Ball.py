@@ -8,9 +8,9 @@ class Ball:
     def __init__(self, border, sound_effect, channel, image):
         self.border = border
         self.pos = [self.random_Xpos(), self.random_Ypos()] # Initial position
-        self.radius = random.randint(20, 60) # Ball's radius
+        self.radius = random.randint(20, 50) # Ball's radius
         self.color = (random.randint(0,255), random.randint(0,255), random.randint(0,255)) # Ball's color
-        self.vel = [random.randint(0,15), random.randint(0,15)] # Initial velocity
+        self.vel = [random.randint(0, 10), random.randint(0, 10)] # Initial velocity
         self.collision = 0 # Initial times of collision
         self.sound_effect = sound_effect # Sound effect of the ball
         self.img = image # Image of the ball
@@ -57,7 +57,7 @@ class Ball:
             self.img = pygame.transform.scale(self.img, (self.radius * 2, self.radius * 2))
             
             # Draw the image
-            pygame.draw.circle(screen, self.color, (self.pos[0], self.pos[1]), self.radius)
+            #pygame.draw.circle(screen, self.color, (self.pos[0], self.pos[1]), self.radius)
             screen.blit(self.img, (self.pos[0] - self.radius, self.pos[1] - self.radius))
         # Draw a random colored ball if the user did not give an image
         else:
@@ -66,7 +66,7 @@ class Ball:
     # Update the ball bouncing in the border
     def update(self):
         # Physics variables
-        gravity = 0.5 # Gravity Constant
+        gravity = 0.15 # Gravity Constant
         
         # Apply Gravity
         self.vel[1] += gravity

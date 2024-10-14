@@ -1,7 +1,11 @@
+from os import environ
+environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 import Ball, Border
 import pygame
 import tkinter as tk
 from tkinter import filedialog as fd
+
+# TODO Add screen recording functionality
 
 # Global file path variables
 sound_path = None
@@ -49,13 +53,10 @@ def start_sim(balls_num):
     HEIGHT = WIDTH * 1.778
     CENTER = [WIDTH / 2, HEIGHT / 2]
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    FPS = 90
+    FPS = 60
 
     # Set title of the window
     pygame.display.set_caption("Bouncing Ball Simulator")
-
-    # Debugging sound and image file paths
-    #print(f"Sound path = {sound_path} & Image path = {img_path}")
 
     # Increase the number of sound channels
     CHANNELS_NUM = 32
@@ -64,16 +65,14 @@ def start_sim(balls_num):
     # Load sound effects
     try:
         sound_effect = pygame.mixer.Sound(sound_path)
-        sound_effect.set_volume(0.15)  # 15% volume
+        sound_effect.set_volume(0.05)  # 5% volume
     except pygame.error and TypeError:
-        print("Sound effect file not found. Using None.")
         sound_effect = None
 
     # Load images
     try:
         ball_img = pygame.image.load(img_path).convert_alpha() # Load once
     except pygame.error and TypeError:
-        print("Image file not found. Using None.")
         ball_img = None
 
     # Create a font object
@@ -125,6 +124,7 @@ def start_sim(balls_num):
 
             # Draw the ball
             ball.draw(screen)
+
         # Draw the text for the number of balls
         draw_text(f"Balls = {balls_num}", font, (255, 255, 255), screen, CENTER[0], CENTER[1] - 300)
 
