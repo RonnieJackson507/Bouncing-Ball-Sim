@@ -72,7 +72,7 @@ def start_sim(balls_num, record_flag):
         # Get the first window that matches the title (if any)
         window = gw.getWindowsWithTitle(window_title)[0] if gw.getWindowsWithTitle(window_title) else None
 
-        recording_window = [WIDTH, HEIGHT - 60] # The window for recording
+        recording_window = [WIDTH, HEIGHT] # The window for recording
 
         # Define codec and create a VideoWriter object
         output_file = "simulation.mp4"
@@ -157,7 +157,7 @@ def start_sim(balls_num, record_flag):
 
         if record_flag:
             # Add screenshots to the frames array
-            img = pyautogui.screenshot(region=(window.left + 9, window.top + 60, recording_window[0], recording_window[1]))
+            img = pyautogui.screenshot(region=(window.left + 9, window.top + 38, recording_window[0], recording_window[1]))
             frame = np.array(img)
             frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)  # Convert RGB to BGR for OpenCV
 
