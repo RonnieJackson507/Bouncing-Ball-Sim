@@ -158,7 +158,7 @@ def start_sim(balls_num, record_flag):
 
         if record_flag:
             # Add screenshots to the frames array
-            img = pyautogui.screenshot(region=(window.left + 9, window.top + 38, recording_window[0], recording_window[1]))
+            img = pyautogui.screenshot(region=(window.left + 8 , window.top + 32 , recording_window[0], recording_window[1]))
             frame = np.array(img)
             frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)  # Convert RGB to BGR for OpenCV
 
@@ -181,8 +181,8 @@ root.title("Bouncing Ball Simulator")
 # Center and Size the window
 screen_width = root.winfo_screenwidth()
 screen_height = root.winfo_screenheight()
-width = 325 # Width of the screen
-height = 250 # Height of the screen
+width = 275 # Width of the screen
+height = 225 # Height of the screen
 x = (screen_width // 2) - (width // 2)
 y = (screen_height // 2) - (height // 2)
 root.geometry(f"{width}x{height}+{x}+{y}")
@@ -226,7 +226,7 @@ checkbutton = tk.Checkbutton(root, text="Record", variable=record,
                               highlightbackground=text_color).grid(row=3,column=1, columnspan=3, padx=10, pady=10, sticky="ew")
 
 # Button to perform the simulation by quitting the menu
-tk.Button(root, text="Simulate Bouncing Balls", bg=bg_color, fg=text_color, highlightbackground=divider_color, command= init_sim).grid(row=6, column=0, columnspan=3, padx=10, pady=10, sticky="sew")
+tk.Button(root, text="Simulate Bouncing Balls", bg=bg_color, fg=text_color, highlightbackground=divider_color, command= init_sim).grid(row=6, column=0, columnspan=3, padx=10, pady=10, sticky="nsew")
 
 # Run the Tkinter event loop
 root.mainloop()
