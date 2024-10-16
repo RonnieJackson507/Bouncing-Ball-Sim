@@ -1,3 +1,4 @@
+import os, threading
 from os import environ
 # Hide the pygame support prompt
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
@@ -5,10 +6,10 @@ import Ball, Border
 import pygame
 import tkinter as tk
 from tkinter import filedialog as fd
-import pyautogui
-import numpy as np
+import cv2, pyautogui
 import pygetwindow as gw
-import cv2
+import numpy as np
+import sounddevice, wave
 
 # TODO Add screen recording functionality with audio
 
@@ -185,6 +186,7 @@ height = 250 # Height of the screen
 x = (screen_width // 2) - (width // 2)
 y = (screen_height // 2) - (height // 2)
 root.geometry(f"{width}x{height}+{x}+{y}")
+root.resizable(width=False, height=False)
 
 # Colors - Dark Theme
 bg_color = "grey20"
