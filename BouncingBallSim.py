@@ -9,7 +9,38 @@ from tkinter import filedialog as fd
 import cv2, pyautogui
 import pygetwindow as gw
 import numpy as np
+import threading
 import sounddevice, wave
+
+WIDTH = 400
+HEIGHT = int(WIDTH * 1.778)
+window_title = "Bouncing Ball Simulator"
+FPS = 60
+
+output_video_file = "simulation.mp4"
+
+# Flags to control the recording process
+record_flag = False
+
+def record_video():
+    # Get the first window that matches the title (if any)
+    window = gw.getWindowsWithTitle(window_title)[0] if gw.getWindowsWithTitle(window_title) else None
+    recording_window = [WIDTH, HEIGHT] # The window for recording
+
+    # Define codec and create a VideoWriter object
+    fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+    out = cv2.VideoWriter(output_video_file, fourcc, FPS, (recording_window[0], recording_window[1]))    
+    
+    while record_flag:
+        # Add screenshots to the frames array
+        img = pyautogui.screenshot(region=(window.left + 8 , window.top + 32 , recording_window[0], recording_window[1]))
+        frame = np.array(img)
+        frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)  # Convert RGB to BGR for OpenCV
+
+        # Write the frame to the video file
+        out.write(frame)
+
+    out.release()
 
 # TODO Add screen recording functionality with audio
 
@@ -39,6 +70,8 @@ def open_image():
 
 # Initializes the simulator
 def init_sim():
+    global record_flag
+
     # Get the number of balls
     balls_num = int(entry_balls.get())
 
@@ -49,36 +82,24 @@ def init_sim():
     root.destroy()
 
     # Start the simulation
-    start_sim(balls_num, record_flag)
+    start_sim(balls_num)
 
 # Starts the simulation
-def start_sim(balls_num, record_flag):  
+def start_sim(balls_num):
+    global record_flag
+
     # Initialize Pygame and the mixer
     pygame.init()
     pygame.mixer.init()
 
     # Create a screen (window) with aspect ration of 9:16
-    WIDTH = 400
-    HEIGHT = int(WIDTH * 1.778)
     CENTER = [WIDTH / 2, HEIGHT / 2]
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    FPS = 60
 
     # Set title of the window
-    window_title = "Bouncing Ball Simulator"
     pygame.display.set_caption(window_title)
 
-    # Recording
-    if record_flag:
-        # Get the first window that matches the title (if any)
-        window = gw.getWindowsWithTitle(window_title)[0] if gw.getWindowsWithTitle(window_title) else None
-
-        recording_window = [WIDTH, HEIGHT] # The window for recording
-
-        # Define codec and create a VideoWriter object
-        output_file = "simulation.mp4"
-        fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-        out = cv2.VideoWriter(output_file, fourcc, FPS, (recording_window[0], recording_window[1]))
+    
 
     # Increase the number of sound channels
     CHANNELS_NUM = 32
@@ -122,6 +143,12 @@ def start_sim(balls_num, record_flag):
     # Main game loop flag
     running = True
 
+    # Recording
+    if record_flag:
+        # Start the video recording in a separate thread
+        video_thread = threading.Thread(target=record_video)
+        video_thread.start()
+
     # Main game loop
     while running:
         # Check for events (like closing the window)
@@ -156,21 +183,16 @@ def start_sim(balls_num, record_flag):
         # Update the display
         pygame.display.update()
 
-        if record_flag:
-            # Add screenshots to the frames array
-            img = pyautogui.screenshot(region=(window.left + 8 , window.top + 32 , recording_window[0], recording_window[1]))
-            frame = np.array(img)
-            frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)  # Convert RGB to BGR for OpenCV
-
-            # Write the frame to the video file
-            out.write(frame)
-
         # Limit the frame rate
         pygame.time.Clock().tick(FPS)
 
-    # Quit Pygame and Release the VideoWriter
+    # Release the VideoWriter
     if record_flag:
-        out.release()
+        record_flag = False
+    
+        video_thread.join()
+
+    # Quit Pygame
     pygame.quit()
 
 # MENU
