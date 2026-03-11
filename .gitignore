@@ -13,6 +13,9 @@
 # Ignore video file
 *.mp4
 
+# Ignore audio file
+*.wav
+
 # Ignore other common files
 __pycache__/
 *.pyc
@@ -24,3 +27,6 @@ __pycache__/
 # Ignore virtual environments
 venv/
 myenv/
+
+# Ignore Claude Code session files
+.claude/

@@ -1,4 +1,4 @@
-import os, threading
+import os, threading, queue
 from os import environ
 # Hide the pygame support prompt
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
@@ -6,43 +6,90 @@ import Ball, Border
 import pygame
 import tkinter as tk
 from tkinter import filedialog as fd
-import cv2, pyautogui
-import pygetwindow as gw
+import cv2
 import numpy as np
-import threading
-import sounddevice, wave
+import wave, subprocess
+import imageio_ffmpeg
 
+# Simulation window parameters
 WIDTH = 400
 HEIGHT = int(WIDTH * 1.778)
 window_title = "Bouncing Ball Simulator"
 FPS = 60
 
-output_video_file = "simulation.mp4"
+output_video_file = "simulation.mp4" # Video of the simulation
 
 # Flags to control the recording process
 record_flag = False
 
-def record_video():
-    # Get the first window that matches the title (if any)
-    window = gw.getWindowsWithTitle(window_title)[0] if gw.getWindowsWithTitle(window_title) else None
-    recording_window = [WIDTH, HEIGHT] # The window for recording
+# Queue for passing frames from the main loop to the recording thread
+frame_queue = queue.Queue(maxsize=120)  # buffer up to 2 seconds of frames at 60 FPS
 
+# Record the frames of the simulation
+def record_video():
     # Define codec and create a VideoWriter object
     fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-    out = cv2.VideoWriter(output_video_file, fourcc, FPS, (recording_window[0], recording_window[1]))    
-    
-    while record_flag:
-        # Add screenshots to the frames array
-        img = pyautogui.screenshot(region=(window.left + 8 , window.top + 32 , recording_window[0], recording_window[1]))
-        frame = np.array(img)
-        frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)  # Convert RGB to BGR for OpenCV
+    out = cv2.VideoWriter(output_video_file, fourcc, FPS, (WIDTH, HEIGHT))
 
-        # Write the frame to the video file
-        out.write(frame)
+    while record_flag or not frame_queue.empty():
+        try:
+            frame = frame_queue.get(timeout=0.1)
+            out.write(frame)
+        except queue.Empty:
+            continue
 
     out.release()
 
-# TODO Add screen recording functionality with audio
+# Mix bounce sounds at their exact frame timestamps and mux into the video
+def mix_and_mux(sound_effect, bounce_events, total_frames):
+    freq, _, channels = pygame.mixer.get_init()
+    sound_array = pygame.sndarray.array(sound_effect)  # raw audio data from pygame
+    volume = 0.05  # match the in-sim volume
+
+    samples_per_frame = freq / FPS
+    total_samples = int(total_frames * samples_per_frame)
+
+    # Build silent buffer then mix in each bounce
+    if channels == 2:
+        audio_buffer = np.zeros((total_samples, 2), dtype=np.float32)
+    else:
+        audio_buffer = np.zeros(total_samples, dtype=np.float32)
+
+    for frame in bounce_events:
+        start = int(frame * samples_per_frame)
+        end = start + len(sound_array)
+        end_clipped = min(end, total_samples)
+        length = end_clipped - start
+        audio_buffer[start:end_clipped] += sound_array[:length] * volume
+
+    # Clip to int16 range and convert
+    audio_int16 = np.clip(audio_buffer, -32768, 32767).astype(np.int16)
+
+    # Write temp WAV file
+    temp_audio = output_video_file + ".tmp_audio.wav"
+    temp_video = output_video_file + ".tmp_video.mp4"
+    os.rename(output_video_file, temp_video)
+
+    with wave.open(temp_audio, 'w') as wf:
+        wf.setnchannels(channels)
+        wf.setsampwidth(2)  # 16-bit = 2 bytes
+        wf.setframerate(freq)
+        wf.writeframes(audio_int16.tobytes())
+
+    # Mux video + audio with ffmpeg
+    ffmpeg = imageio_ffmpeg.get_ffmpeg_exe()
+    subprocess.run([
+        ffmpeg, '-y',
+        '-i', temp_video,
+        '-i', temp_audio,
+        '-c:v', 'copy',
+        '-c:a', 'aac',
+        '-shortest',
+        output_video_file
+    ], check=True)
+
+    os.remove(temp_video)
+    os.remove(temp_audio)
 
 # Global file path variables
 sound_path = None
@@ -77,6 +124,19 @@ def init_sim():
 
     # Get the flag for recording the simulator
     record_flag = True if record.get() == 1 else False
+
+    # Prompt for output file path if recording
+    if record_flag:
+        global output_video_file
+        path = fd.asksaveasfilename(
+            title="Save recording as",
+            defaultextension=".mp4",
+            filetypes=(("MP4 files", "*.mp4"),)
+        )
+        if path:
+            output_video_file = path
+        else:
+            record_flag = False  # User cancelled, don't record
 
     # Destroy the Menu's window
     root.destroy()
@@ -143,6 +203,11 @@ def start_sim(balls_num):
     # Main game loop flag
     running = True
 
+    # Audio tracking for recording
+    bounce_events = []
+    prev_collisions = [0] * balls_num
+    frame_num = 0
+
     # Recording
     if record_flag:
         # Start the video recording in a separate thread
@@ -165,9 +230,14 @@ def start_sim(balls_num):
         collision = 0 # Collisions from the ball
 
         # Traverse through the Balls array
-        for ball in balls:
+        for i, ball in enumerate(balls):
             # Update the ball
             ball.update()
+
+            # Track bounce events for audio mixing
+            if ball.collision > prev_collisions[i]:
+                bounce_events.append(frame_num)
+                prev_collisions[i] = ball.collision
 
             collision += ball.collision
 
@@ -183,14 +253,26 @@ def start_sim(balls_num):
         # Update the display
         pygame.display.update()
 
+        # Capture the frame directly from the pygame surface
+        if record_flag and not frame_queue.full():
+            raw = pygame.surfarray.array3d(screen)
+            frame = cv2.cvtColor(raw.transpose(1, 0, 2), cv2.COLOR_RGB2BGR)
+            frame_queue.put(frame)
+
         # Limit the frame rate
         pygame.time.Clock().tick(FPS)
+
+        frame_num += 1
 
     # Release the VideoWriter
     if record_flag:
         record_flag = False
-    
+
         video_thread.join()
+
+        # Mix audio into the video if a sound was provided and bounces occurred
+        if sound_effect is not None and bounce_events:
+            mix_and_mux(sound_effect, bounce_events, frame_num)
 
     # Quit Pygame
     pygame.quit()
